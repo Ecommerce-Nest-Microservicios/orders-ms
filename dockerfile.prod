@@ -14,6 +14,9 @@ RUN corepack enable && corepack prepare pnpm@10.6.3 --activate && \
 # 🟢 Builder
 FROM node:21-alpine3.19 AS build
 
+ARG ORDERS_DATABASE_URL
+ENV DATABASE_URL = $ORDERS_DATABASE_URL
+
 WORKDIR /usr/src/app
 
 RUN corepack enable && corepack prepare pnpm@10.6.3 --activate
@@ -25,7 +28,7 @@ COPY --from=deps /usr/src/app/prisma ./prisma
 COPY . .
 
 # Generar el cliente de Prisma
-RUN npx prisma generate && prisma migrate deploy
+RUN npx prisma generate && npx prisma migrate deploy
 
 RUN pnpm run build && \
     pnpm install --prod --frozen-lockfile && \
