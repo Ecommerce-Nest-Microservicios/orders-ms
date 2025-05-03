@@ -8,6 +8,7 @@ export interface IOrder {
   paid?: boolean;
   paidAt: Date | null;
   OrderItems?: IOrderItemFiltered[];
+  paymentUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }

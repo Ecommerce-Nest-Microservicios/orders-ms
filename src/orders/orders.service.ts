@@ -67,21 +67,36 @@ export class OrdersService {
             },
           }),
         ).pipe(
-          map((orderSaved) => {
-            return {
-              ok: true,
-              message: 'Order created!',
-              data: {
-                ...orderSaved,
-                OrderItems: orderSaved.OrderItems.map((item) => {
-                  const productName = productsFound.find((product) => product.id === item.productId).name;
+          switchMap((orderSaved) => {
+            const OrderItems = orderSaved.OrderItems.map((item) => {
+              const productName = productsFound.find((product) => product.id === item.productId).name;
+              return {
+                ...item,
+                name: productName,
+              };
+            });
+
+            const orderSessionItems = OrderItems.map((item) => ({
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price,
+            }));
+
+            return this.client
+              .send('createSession', { orderId: orderSaved.id, items: orderSessionItems, currency: 'usd' })
+              .pipe(
+                map((paymentSession) => {
                   return {
-                    ...item,
-                    name: productName,
+                    ok: true,
+                    message: 'Order created!',
+                    data: {
+                      ...orderSaved,
+                      OrderItems,
+                      paymentUrl: paymentSession.url,
+                    },
                   };
                 }),
-              },
-            };
+              );
           }),
           catchError((error) => {
             throw error instanceof RpcException
