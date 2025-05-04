@@ -1,5 +1,4 @@
--- CreateEnum
-CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'DELIVERED', 'CANCELLED');
+
 
 -- CreateTable
 CREATE TABLE "Order" (
