@@ -1,9 +1,10 @@
 import { Controller, Logger, ParseUUIDPipe } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderPaginationDto, PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaidOrderDto } from './dto/paid-order.dto';
 
 @Controller()
 export class OrdersController {
@@ -46,5 +47,11 @@ export class OrdersController {
   remove(@Payload('id') id: string) {
     this.logger.log(`Removing order...`);
     return this.ordersService.remove(id);
+  }
+
+  @EventPattern('payment.succeeded')
+  paidOrder(@Payload() paidOrderDto: PaidOrderDto) {
+    this.logger.log('Paying order...');
+    return this.ordersService.paidOrder(paidOrderDto);
   }
 }

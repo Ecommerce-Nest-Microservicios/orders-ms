@@ -13,6 +13,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { OrderPaginationDto, PaginationDto } from 'src/common/dto/pagination.dto';
 import { NATS_SERVICE } from 'src/config/microservices';
+import { PaidOrderDto } from './dto/paid-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -38,7 +39,7 @@ export class OrdersService {
         const totalAmount = Array.isArray(sanitizedProducts)
           ? items.reduce((acc, item) => {
               const totalItem = item.price * item.quantity;
-              console.log(totalItem, acc, item);
+
               return (acc += totalItem);
             }, 0)
           : 0;
@@ -350,6 +351,49 @@ export class OrdersService {
               ok: true,
               message: 'Order deleted!',
               data: orderDeleted,
+            };
+          }),
+          catchError((error) => {
+            throw error instanceof RpcException
+              ? error
+              : new RpcException({
+                  message: error.message || 'Unexpected error occurred',
+                  error: error.code || 'Internal Server Error',
+                  code: 500,
+                });
+          }),
+        );
+      }),
+    );
+  }
+
+  paidOrder(paidOrderDto: PaidOrderDto): Observable<IOrderServiceResponse> {
+    const { orderId, stripePaymentId, receiptUrl } = paidOrderDto;
+    return this.findOne(orderId).pipe(
+      switchMap(({ data }) => {
+        return from(
+          this.prisma.order.update({
+            data: {
+              paid: true,
+              paidAt: new Date(),
+              status: 'PAID',
+              stripeChargeId: stripePaymentId,
+              OrderReceipt: {
+                create: {
+                  receiptUrl,
+                },
+              },
+            },
+            where: {
+              id: orderId,
+            },
+          }),
+        ).pipe(
+          map((orderPaid) => {
+            return {
+              ok: true,
+              message: 'Order paid!',
+              data: orderPaid,
             };
           }),
           catchError((error) => {
