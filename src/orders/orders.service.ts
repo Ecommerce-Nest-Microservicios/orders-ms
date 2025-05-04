@@ -129,6 +129,13 @@ export class OrdersService {
           orderBy: {
             createdAt: 'desc',
           },
+          include: {
+            OrderReceipt: {
+              select: {
+                receiptUrl: true,
+              },
+            },
+          },
         }),
         this.prisma.order.count(),
       ]),
@@ -179,6 +186,13 @@ export class OrdersService {
           skip: offset,
           where: {
             status: status,
+          },
+          include: {
+            OrderReceipt: {
+              select: {
+                receiptUrl: true,
+              },
+            },
           },
           orderBy: {
             createdAt: 'desc',
