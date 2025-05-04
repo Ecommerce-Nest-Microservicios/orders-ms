@@ -37,7 +37,7 @@ export class OrdersService {
         }
 
         const totalAmount = Array.isArray(sanitizedProducts)
-          ? items.reduce((acc, item) => {
+          ? sanitizedProducts.reduce((acc, item) => {
               const totalItem = item.price * item.quantity;
 
               return (acc += totalItem);
