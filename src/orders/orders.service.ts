@@ -86,7 +86,7 @@ export class OrdersService {
             }));
 
             return this.client
-              .send('createSession', { orderId: orderSaved.id, items: orderSessionItems, currency: 'usd' })
+              .send('createSession', { orderId: orderSaved.id, items: orderSessionItems, currency: 'USD' })
               .pipe(
                 map((paymentSession) => {
                   return {
