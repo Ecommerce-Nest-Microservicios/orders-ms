@@ -3,7 +3,6 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import {
-  IOrder,
   IOrderItemFiltered,
   IOrderServiceResponse,
   IOrdersServiceResponse,
@@ -14,6 +13,7 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { OrderPaginationDto, PaginationDto } from 'src/common/dto/pagination.dto';
 import { NATS_SERVICE } from 'src/config/microservices';
 import { PaidOrderDto } from './dto/paid-order.dto';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -376,7 +376,7 @@ export class OrdersService {
             data: {
               paid: true,
               paidAt: new Date(),
-              status: 'PAID',
+              status: OrderStatus.PAID,
               stripeChargeId: stripePaymentId,
               OrderReceipt: {
                 create: {
