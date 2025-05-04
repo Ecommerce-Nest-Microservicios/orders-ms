@@ -1,7 +1,7 @@
 import { IsEnum, IsOptional, IsPositive, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OrderStatus } from '@prisma/client';
-import { object } from 'joi';
+
 console.log(OrderStatus);
 export class OrderPaginationDto {
   @IsOptional()
