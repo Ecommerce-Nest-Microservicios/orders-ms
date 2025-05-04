@@ -17,7 +17,7 @@ export class OrderPaginationDto {
 
   @IsOptional()
   @IsEnum(OrderStatus, {
-    message: `Possible satus values are ${Object.keys(OrderStatus).join(',')}`,
+    message: `Possible satus values are `,
   })
   status?: OrderStatus;
 }
