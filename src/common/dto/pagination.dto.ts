@@ -2,6 +2,7 @@ import { IsEnum, IsOptional, IsPositive, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OrderStatus } from '@prisma/client';
 
+console.log(OrderStatus);
 export class OrderPaginationDto {
   @IsOptional()
   @IsPositive()
@@ -17,7 +18,7 @@ export class OrderPaginationDto {
 
   @IsOptional()
   @IsEnum(OrderStatus, {
-    message: `Possible satus values are `,
+    message: `Possible satus values are ${[OrderStatus.CANCELLED, OrderStatus.DELIVERED, OrderStatus.PENDING, OrderStatus.PAID]}`,
   })
   status?: OrderStatus;
 }
